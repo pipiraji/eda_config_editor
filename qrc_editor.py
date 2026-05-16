@@ -311,14 +311,17 @@ class QrcEditor:
 def main():
     parser = argparse.ArgumentParser(description="QRC Configuration Editor")
     parser.add_argument("file", help="Path to the QRC .tcl file")
-    parser.add_argument("--action", choices=['uncomment', 'update', 'set', 'delete'], required=True)
-    parser.add_argument("--command", help="Command (regex supported)", required=True)
+    parser.add_argument("action", choices=['uncomment', 'update', 'set', 'delete'], help="Action to perform")
+    parser.add_argument("--command", help="Command (regex supported)")
     parser.add_argument("--option", help="Option (regex supported)")
     parser.add_argument("--value", help="Value (regex supported for uncomment/delete, literal for update/set)")
     parser.add_argument("--dry-run", action="store_true", help="Show changes without saving")
     parser.add_argument("--output", help="Output file path (default: overwrite input)")
 
     args = parser.parse_args()
+
+    if not (args.command or args.option or args.value):
+        parser.error("At least one of --command, --option, or --value must be provided.")
 
     editor = QrcEditor(args.file)
 

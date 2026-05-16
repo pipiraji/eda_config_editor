@@ -13,8 +13,8 @@
 * **주석 기호:** 라인 시작 부분의 `#` (다중 `#` 포함, 예: `###setenv`)
 
 > **CLI 실행 형태:**
-> `python setenv_editor.py [파일명] --action [명령어] --command [변수명] --value [값]`
-> *(예: `python setenv_editor.py env.csh --action set --command PATH --value "/new/path:$PATH"`)*
+> `python setenv_editor.py [파일명] [명령어] --command [변수명] --value [값]`
+> *(예: `python setenv_editor.py env.csh set --command PATH --value "/new/path:$PATH"`)*
 
 ---
 

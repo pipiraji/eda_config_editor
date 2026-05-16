@@ -9,3 +9,4 @@ setenv BBB CCC
 
 ###setemv AAAA BBBB
 ###setemv AAAA BBBB setenv .* LITERAL
+setenv TEST_VAR TEST_VAL
