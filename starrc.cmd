@@ -1,0 +1,8 @@
+*TCAD_GRD_FILE: /path/to/process.nxtgrd
+NETLIST_FILE: no
+NETLIST_FORMAT: SPF
+TOP_CELL_NAME: my_top_cell
+*EXTRACT_RES: YES
+*EXTRACT_CAP: YES
+NETLIST_FILE2: no
+        
