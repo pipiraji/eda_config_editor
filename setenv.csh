@@ -13,3 +13,7 @@ setenv AAAA BBBB
 setenv AAAA BBBB
 setenv TEST_VAR TEST_VAL
 setenv NEW "VDD* VSS?"
+
+setenv VAR_ONLY1 
+setenv VAR_ONLY2
+setenv VAR_ONLY3
