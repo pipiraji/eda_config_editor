@@ -33,23 +33,23 @@ config_editor/
 ├── README.md                 # 통합 가이드 문서 (본 파일)
 ├── run_tests.py              # 통합 테스트 실행 스크립트
 ├── test_report.md            # [자동 생성] 통합 테스트 결과 보고서
-├── qrc/                      # Cadence QRC 툴 폴더
-│   ├── qrc_editor.py
+├── qrc_config_editor/        # Cadence QRC 툴 폴더
+│   ├── qrc_config_editor.py
 │   ├── qrc.cmd
-│   └── qrc.md
-├── starrc/                   # Synopsys StarRC 툴 폴더
-│   ├── starrc_editor.py
+│   └── qrc_config_editor.md
+├── starrc_config_editor/     # Synopsys StarRC 툴 폴더
+│   ├── starrc_config_editor.py
 │   ├── starrc.cmd
-│   └── starrc.md
-├── setenv/                   # tcsh 환경변수 툴 폴더
-│   ├── setenv_editor.py
+│   └── starrc_config_editor.md
+├── setenv_config_editor/     # tcsh 환경변수 툴 폴더
+│   ├── setenv_config_editor.py
 │   ├── setenv.csh
-│   └── setenv.md
-├── icv/                      # Synopsys IC Validator 툴 폴더
-│   ├── icv_editor.py
+│   └── setenv_config_editor.md
+├── icv_config_editor/        # Synopsys IC Validator 툴 폴더
+│   ├── icv_config_editor.py
 │   ├── icv.pxl
-│   └── icv.md
-└── _convert_info_to_env/     # 환경변수 일괄 변환 도구 폴더
+│   └── icv_config_editor.md
+└── info_to_env_converter/     # 환경변수 일괄 변환 도구 폴더
     ├── info_to_env_converter.py
     ├── info_to_env_converter.md
     ├── setting.info
@@ -59,11 +59,11 @@ config_editor/
 
 | 에디터 스크립트 | 대상 EDA 툴 / 구성 파일 | 핵심 특징 |
 | :--- | :--- | :--- |
-| **`qrc/qrc_editor.py`** | Cadence QRC (`qrc/qrc.cmd`) | 옵션명 하이픈(`-`) 방지 및 다중 계층(Command -> Option -> Value) AND 제어 |
-| **`starrc/starrc_editor.py`** | Synopsys StarRC (`starrc/starrc.cmd`) | 심플한 Key-Value 구조의 주석 제어 및 강력한 AND 조건 필터링 |
-| **`setenv/setenv_editor.py`** | `tcsh` 환경 변수 (`setenv/setenv.csh`) | 2항/3항 완벽 지원, 공백 포함 값 자동 큰따옴표 랩핑 및 주석 Spacing 보존 |
-| **`icv/icv_editor.py`** | Synopsys IC Validator (`icv/icv.pxl`) | 블록 주석 및 `#ifdef` 보호 가드, 우측 설명 주석 Spacing 정밀 보존 |
-| **`_convert_info_to_env/info_to_env_converter.py`** | 설정 변환기 (`_convert_info_to_env/setting.info`) | `.info` 설정을 `sourceme.csh` 및 `sourceme.yaml`로 중복 가드 및 원자적 변환 |
+| **`qrc_config_editor/qrc_config_editor.py`** | Cadence QRC (`qrc_config_editor/qrc.cmd`) | 옵션명 하이픈(`-`) 방지 및 다중 계층(Command -> Option -> Value) AND 제어 |
+| **`starrc_config_editor/starrc_config_editor.py`** | Synopsys StarRC (`starrc_config_editor/starrc.cmd`) | 심플한 Key-Value 구조의 주석 제어 및 강력한 AND 조건 필터링 |
+| **`setenv_config_editor/setenv_config_editor.py`** | `tcsh` 환경 변수 (`setenv_config_editor/setenv.csh`) | 2항/3항 완벽 지원, 공백 포함 값 자동 큰따옴표 랩핑 및 주석 Spacing 보존 |
+| **`icv_config_editor/icv_config_editor.py`** | Synopsys IC Validator (`icv_config_editor/icv.pxl`) | 블록 주석 및 `#ifdef` 보호 가드, 우측 설명 주석 Spacing 정밀 보존 |
+| **`info_to_env_converter/info_to_env_converter.py`** | 설정 변환기 (`info_to_env_converter/setting.info`) | `.info` 설정을 `sourceme.csh` 및 `sourceme.yaml`로 중복 가드 및 원자적 변환 |
 
 ---
 
@@ -72,37 +72,37 @@ config_editor/
 ### 1. Cadence QRC
 ```bash
 # 특정 command 하위의 특정 option의 값을 업데이트
-python qrc/qrc_editor.py qrc/qrc.cmd set --command input_db --option run_name --value "Design Workspace"
+python qrc_config_editor/qrc_config_editor.py qrc_config_editor/qrc.cmd set --command input_db --option run_name --value "Design Workspace"
 ```
 
 ### 2. Synopsys StarRC
 ```bash
 # 값이 YES인 설정들만 골라내어 일괄 주석 해제(uncomment)
-python starrc/starrc_editor.py starrc/starrc.cmd uncomment --value YES
+python starrc_config_editor/starrc_config_editor.py starrc_config_editor/starrc.cmd uncomment --value YES
 ```
 
 ### 3. tcsh 환경 변수 (setenv)
 ```bash
 # 공백이 포함된 변수를 추가 (자동으로 큰따옴표가 붙어 3항 문법 수호)
-python setenv/setenv_editor.py setenv/setenv.csh set --variable NEW --value "VDD* VSS?"
+python setenv_config_editor/setenv_config_editor.py setenv_config_editor/setenv.csh set --variable NEW --value "VDD* VSS?"
 
 # 2항 구조의 빈 환경변수 추가
-python setenv/setenv_editor.py setenv/setenv.csh set --variable VAR_ONLY4
+python setenv_config_editor/setenv_config_editor.py setenv_config_editor/setenv.csh set --variable VAR_ONLY4
 ```
 
 ### 4. Synopsys IC Validator (#define)
 ```bash
 # 조건부 컴파일 구역을 안전하게 우회하며 전역 CHECK 변수들만 주석 해제
-python icv/icv_editor.py icv/icv.pxl uncomment --variable ".*_CHECK"
+python icv_config_editor/icv_config_editor.py icv_config_editor/icv.pxl uncomment --variable ".*_CHECK"
 
 # 기존 Spacing 정렬 간격을 그대로 지키며 값 업데이트
-python icv/icv_editor.py icv/icv.pxl update --variable GRID_RESOLUTION --value 0.005
+python icv_config_editor/icv_config_editor.py icv_config_editor/icv.pxl update --variable GRID_RESOLUTION --value 0.005
 ```
 
 ### 5. 설정 정보 변환기 (Info-to-Env Converter)
 ```bash
 # setting.info에 등록된 신규 정보들을 sourceme.csh(쉘 환경변수) 및 sourceme.yaml에 자동 병합
-python _convert_info_to_env/info_to_env_converter.py _convert_info_to_env/setting.info _convert_info_to_env/sourceme.csh _convert_info_to_env/sourceme.yaml
+python info_to_env_converter/info_to_env_converter.py info_to_env_converter/setting.info info_to_env_converter/sourceme.csh info_to_env_converter/sourceme.yaml
 ```
 
 ---

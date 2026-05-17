@@ -35,13 +35,13 @@
 
 ### 3.1 실행 형식
 ```bash
-python _convert_info_to_env/info_to_env_converter.py [setting.info 파일] [sourceme.csh 파일] [sourceme.yaml 파일]
+python info_to_env_converter/info_to_env_converter.py [setting.info 파일] [sourceme.csh 파일] [sourceme.yaml 파일]
 ```
 
 ### 3.2 실행 예시
 ```bash
 # setting.info의 환경 데이터를 sourceme.csh 및 sourceme.yaml에 일괄 적용
-python _convert_info_to_env/info_to_env_converter.py _convert_info_to_env/setting.info _convert_info_to_env/sourceme.csh _convert_info_to_env/sourceme.yaml
+python info_to_env_converter/info_to_env_converter.py info_to_env_converter/setting.info info_to_env_converter/sourceme.csh info_to_env_converter/sourceme.yaml
 ```
 
 ---

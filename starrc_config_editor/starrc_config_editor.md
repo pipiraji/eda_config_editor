@@ -13,8 +13,8 @@
 * **구조 특징:** 옵션(Option) 계층이 없는 **1차원 평면(Flat) 구조** (형식: `COMMAND: VALUE`)
 * **주석(Comment):** 라인 맨 앞의 `*` 기호
 > **CLI 실행 형태 (프로젝트 루트 기준):**
-> `python starrc/starrc_editor.py [파일명] [명령어] --command [커맨드명] --value [값]`
-> *(예: `python starrc/starrc_editor.py starrc/starrc.cmd set --command NETLIST_FILE --value "output.spf"`)*
+> `python starrc_config_editor/starrc_config_editor.py [파일명] [명령어] --command [커맨드명] --value [값]`
+> *(예: `python starrc_config_editor/starrc_config_editor.py starrc_config_editor/starrc.cmd set --command NETLIST_FILE --value "output.spf"`)*
 
 ---
 

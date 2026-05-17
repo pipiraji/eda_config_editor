@@ -4,10 +4,10 @@ import shutil
 
 # Files to backup and test
 TEST_FILES = {
-    "qrc/qrc.cmd": "qrc/qrc.cmd.bak",
-    "starrc/starrc.cmd": "starrc/starrc.cmd.bak",
-    "setenv/setenv.csh": "setenv/setenv.csh.bak",
-    "icv/icv.pxl": "icv/icv.pxl.bak"
+    "qrc_config_editor/qrc.cmd": "qrc_config_editor/qrc.cmd.bak",
+    "starrc_config_editor/starrc.cmd": "starrc_config_editor/starrc.cmd.bak",
+    "setenv_config_editor/setenv.csh": "setenv_config_editor/setenv.csh.bak",
+    "icv_config_editor/icv.pxl": "icv_config_editor/icv.pxl.bak"
 }
 
 def backup_files():
@@ -58,26 +58,26 @@ def main():
     
     report_content = []
     report_content.append("# 📊 EDA Config Editors 통합 테스트 결과 보고서 (Test Report)\n")
-    report_content.append("본 보고서는 최신 보완 및 구현된 4대 EDA 환경설정 에디터(`qrc`, `starrc`, `setenv`, `icv`)의 다각적인 동작 테스트 결과를 상세히 기록합니다.\n")
+    report_content.append("본 보고서는 최신 보완 및 구현된 4대 EDA 환경설정 에디터(`qrc_config_editor`, `starrc_config_editor`, `setenv_config_editor`, `icv_config_editor`)의 다각적인 동작 테스트 결과를 상세히 기록합니다.\n")
     report_content.append("--- \n")
 
     try:
         # =========================================================================
         # 1. QRC Editor Tests
         # =========================================================================
-        report_content.append("## 1. QRC Config Editor (`qrc/qrc_editor.py`) 테스트")
+        report_content.append("## 1. QRC Config Editor (`qrc_config_editor/qrc_config_editor.py`) 테스트")
         report_content.append("QRC 에디터의 옵션 유효성 검사(하이픈 제한) 및 다중 AND 조건 매칭을 확인합니다.\n")
         
         # Test 1.1: Hyphen safeguard on option name
-        res = run_cmd(["qrc/qrc_editor.py", "qrc/qrc.cmd", "set", "--command", "input_db", "--option", "-run_name", "--value", "Design"])
+        res = run_cmd(["qrc_config_editor/qrc_config_editor.py", "qrc_config_editor/qrc.cmd", "set", "--command", "input_db", "--option", "-run_name", "--value", "Design"])
         report_content.append("### 1.1 옵션 하이픈('-') 방지 가드 테스트")
         report_content.append(f"- **실행 명령어:** `{res['command']}`")
         report_content.append(f"- **Exit Code:** `{res['code']}`")
         report_content.append(f"- **출력 내용 (에러 메시지):**\n```\n{res['stderr'] or res['stdout']}\n```\n")
 
         # Test 1.2: Normal Set & Spaces Quoting Value
-        res = run_cmd(["qrc/qrc_editor.py", "qrc/qrc.cmd", "set", "--command", "input_db", "--option", "run_name", "--value", "Design Workspace"])
-        segment = read_file_segment("qrc/qrc.cmd", keyword="run_name")
+        res = run_cmd(["qrc_config_editor/qrc_config_editor.py", "qrc_config_editor/qrc.cmd", "set", "--command", "input_db", "--option", "run_name", "--value", "Design Workspace"])
+        segment = read_file_segment("qrc_config_editor/qrc.cmd", keyword="run_name")
         report_content.append("### 1.2 공백 포함 값 추가 및 저장 테스트")
         report_content.append(f"- **실행 명령어:** `{res['command']}`")
         report_content.append(f"- **결과 파일 내용:**\n```tcl\n{segment}```\n")
@@ -85,12 +85,12 @@ def main():
         # =========================================================================
         # 2. StarRC Editor Tests
         # =========================================================================
-        report_content.append("## 2. StarRC Config Editor (`starrc/starrc_editor.py`) 테스트")
+        report_content.append("## 2. StarRC Config Editor (`starrc_config_editor/starrc_config_editor.py`) 테스트")
         report_content.append("StarRC의 AND 교집합 필터링 기반 주석 제어를 검증합니다.\n")
 
         # Test 2.1: Uncommenting matching and logic
-        res = run_cmd(["starrc/starrc_editor.py", "starrc/starrc.cmd", "uncomment", "--value", "YES"])
-        segment = read_file_segment("starrc/starrc.cmd")
+        res = run_cmd(["starrc_config_editor/starrc_config_editor.py", "starrc_config_editor/starrc.cmd", "uncomment", "--value", "YES"])
+        segment = read_file_segment("starrc_config_editor/starrc.cmd")
         report_content.append("### 2.1 AND 조건 매칭 주석 해제 테스트 (Value가 YES인 항목)")
         report_content.append(f"- **실행 명령어:** `{res['command']}`")
         report_content.append(f"- **결과 파일 내용:**\n```cmd\n{segment}```\n")
@@ -98,30 +98,30 @@ def main():
         # =========================================================================
         # 3. Setenv Editor Tests
         # =========================================================================
-        report_content.append("## 3. tcsh setenv Config Editor (`setenv/setenv_editor.py`) 테스트")
+        report_content.append("## 3. tcsh setenv Config Editor (`setenv_config_editor/setenv_config_editor.py`) 테스트")
         report_content.append("setenv의 2항 구조 완벽 지원, 공백 포함 시 자동 큰따옴표 랩핑 가드, 그리고 우측 주석 공백 간격 보존을 테스트합니다.\n")
 
         # Test 3.1: 3-term Auto Quoting Guard
-        res = run_cmd(["setenv/setenv_editor.py", "setenv/setenv.csh", "set", "--variable", "NEW", "--value", "VDD* VSS?"])
-        segment = read_file_segment("setenv/setenv.csh", keyword="NEW")
+        res = run_cmd(["setenv_config_editor/setenv_config_editor.py", "setenv_config_editor/setenv.csh", "set", "--variable", "NEW", "--value", "VDD* VSS?"])
+        segment = read_file_segment("setenv_config_editor/setenv.csh", keyword="NEW")
         report_content.append("### 3.1 공백 포함 3항 변수 자동 큰따옴표 랩핑 가드 테스트")
         report_content.append(f"- **실행 명령어:** `{res['command']}`")
         report_content.append(f"- **결과 파일 내용:**\n```csh\n{segment}```\n")
 
         # Test 3.2: 2-term support
-        res = run_cmd(["setenv/setenv_editor.py", "setenv/setenv.csh", "set", "--variable", "VAR_ONLY4"])
-        segment = read_file_segment("setenv/setenv.csh", keyword="VAR_ONLY4")
+        res = run_cmd(["setenv_config_editor/setenv_config_editor.py", "setenv_config_editor/setenv.csh", "set", "--variable", "VAR_ONLY4"])
+        segment = read_file_segment("setenv_config_editor/setenv.csh", keyword="VAR_ONLY4")
         report_content.append("### 3.2 값 없는 2항 구조 환경 변수 추가 테스트")
         report_content.append(f"- **실행 명령어:** `{res['command']}`")
         report_content.append(f"- **결과 파일 내용:**\n```csh\n{segment}```\n")
 
         # Test 3.3: Trailing comment spacing preservation
         # First we put PATH back to original but with comment
-        with open("setenv/setenv.csh", 'w', encoding='utf-8') as f:
+        with open("setenv_config_editor/setenv.csh", 'w', encoding='utf-8') as f:
             f.write('\nsetenv PATH "/usr/local/bin:$PATH"        # 패스 지정\n')
         
-        res = run_cmd(["setenv/setenv_editor.py", "setenv/setenv.csh", "update", "--variable", "PATH", "--value", "/new/bin:$PATH"])
-        segment = read_file_segment("setenv/setenv.csh", keyword="PATH")
+        res = run_cmd(["setenv_config_editor/setenv_config_editor.py", "setenv_config_editor/setenv.csh", "update", "--variable", "PATH", "--value", "/new/bin:$PATH"])
+        segment = read_file_segment("setenv_config_editor/setenv.csh", keyword="PATH")
         report_content.append("### 3.3 우측 설명 주석 및 정렬 공백 간격 보존 테스트")
         report_content.append(f"- **실행 명령어:** `{res['command']}`")
         report_content.append(f"- **결과 파일 내용:**\n```csh\n{segment}```\n")
@@ -129,19 +129,19 @@ def main():
         # =========================================================================
         # 4. IC Validator Editor Tests
         # =========================================================================
-        report_content.append("## 4. IC Validator Config Editor (`icv/icv_editor.py`) 테스트")
+        report_content.append("## 4. IC Validator Config Editor (`icv_config_editor/icv_config_editor.py`) 테스트")
         report_content.append("IC Validator의 전역 `#define` 지출 필터링, 조건부 컴파일 구역 및 블록 주석 건너뛰기, Spacing 유지 능력을 검증합니다.\n")
 
         # Test 4.1: Top-level line comment uncommenting
-        res = run_cmd(["icv/icv_editor.py", "icv/icv.pxl", "uncomment", "--variable", ".*_CHECK"])
-        segment = read_file_segment("icv/icv.pxl", keyword="RUN_LVS_CHECK")
+        res = run_cmd(["icv_config_editor/icv_config_editor.py", "icv_config_editor/icv.pxl", "uncomment", "--variable", ".*_CHECK"])
+        segment = read_file_segment("icv_config_editor/icv.pxl", keyword="RUN_LVS_CHECK")
         report_content.append("### 4.1 전역(Top-level) 라인 주석 해제 및 블록/조건부 영역 보호 테스트")
         report_content.append(f"- **실행 명령어:** `{res['command']}`")
         report_content.append(f"- **결과 파일 내용:**\n```c\n{segment}```\n")
 
         # Test 4.2: Space & Comments Alignment Preservation
-        res = run_cmd(["icv/icv_editor.py", "icv/icv.pxl", "update", "--variable", "GRID_RESOLUTION", "--value", "0.005"])
-        segment = read_file_segment("icv/icv.pxl", keyword="GRID_RESOLUTION")
+        res = run_cmd(["icv_config_editor/icv_config_editor.py", "icv_config_editor/icv.pxl", "update", "--variable", "GRID_RESOLUTION", "--value", "0.005"])
+        segment = read_file_segment("icv_config_editor/icv.pxl", keyword="GRID_RESOLUTION")
         report_content.append("### 4.2 값 업데이트 시 Spacing 및 우측 설명 주석 보존 테스트")
         report_content.append(f"- **실행 명령어:** `{res['command']}`")
         report_content.append(f"- **결과 파일 내용:**\n```c\n{segment}```\n")
