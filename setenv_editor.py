@@ -169,32 +169,32 @@ def main():
     parser = argparse.ArgumentParser(description="tcsh setenv Editor")
     parser.add_argument("file", help="Path to the tcsh .csh file")
     parser.add_argument("action", choices=['uncomment', 'update', 'set', 'delete'], help="Action to perform")
-    parser.add_argument("--command", help="Variable name (regex supported)")
+    parser.add_argument("--variable", help="Variable name (regex supported)")
     parser.add_argument("--value", help="Value (literal for update/set, regex for uncomment/delete)")
     parser.add_argument("--dry-run", action="store_true", help="Show changes without saving")
     parser.add_argument("--output", help="Output file path (default: overwrite input)")
 
     args = parser.parse_args()
 
-    if not (args.command or args.value):
-        parser.error("At least one of --command or --value must be provided.")
+    if not (args.variable or args.value):
+        parser.error("At least one of --variable or --value must be provided.")
 
     editor = SetenvEditor(args.file)
 
     if args.action == 'uncomment':
-        editor.uncomment(args.command, args.value)
+        editor.uncomment(args.variable, args.value)
     elif args.action == 'update':
         if args.value is None:
             print("Error: --value is required for update")
             sys.exit(1)
-        editor.update(args.command, args.value)
+        editor.update(args.variable, args.value)
     elif args.action == 'set':
         if args.value is None:
             print("Error: --value is required for set")
             sys.exit(1)
-        editor.set_variable(args.command, args.value)
+        editor.set_variable(args.variable, args.value)
     elif args.action == 'delete':
-        editor.delete(args.command, args.value)
+        editor.delete(args.variable, args.value)
 
     editor.save(output_path=args.output, dry_run=args.dry_run)
 
