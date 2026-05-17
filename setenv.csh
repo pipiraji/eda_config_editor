@@ -10,3 +10,4 @@ setenv AAA BDB
 setenv AAAA BBBB
 setenv AAAA BBBB
 setenv TEST_VAR TEST_VAL
+setenv NEW "VDD* VSS?"

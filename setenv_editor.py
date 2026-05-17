@@ -58,6 +58,17 @@ class SetenvEditor:
         except re.error:
             return pattern == target
 
+    def _quote_value_if_needed(self, val):
+        if val is None:
+            return ""
+        val_str = str(val)
+        # If the value contains any whitespace and is not already quoted with single or double quotes
+        if any(char.isspace() for char in val_str):
+            if not ((val_str.startswith('"') and val_str.endswith('"')) or 
+                    (val_str.startswith("'") and val_str.endswith("'"))):
+                return f'"{val_str}"'
+        return val_str
+
     def uncomment(self, cmd_pattern, val_pattern=None):
         changed = False
         for entry in self.lines:
@@ -76,19 +87,22 @@ class SetenvEditor:
         # 1. Uncomment matching variables first
         self.uncomment(cmd_pattern)
         
+        formatted_value = self._quote_value_if_needed(new_value)
+        
         changed = False
         for entry in self.lines:
             if entry['commented'] or entry['var'] is None:
                 continue
             
             if self._match(cmd_pattern, entry['var']):
-                entry['val'] = str(new_value)
+                entry['val'] = formatted_value
                 changed = True
         return changed
 
     def set_variable(self, cmd, val):
+        formatted_value = self._quote_value_if_needed(val)
         # 1. Try update first (use literal matching for set)
-        if self.update(f"^{re.escape(cmd)}$", val):
+        if self.update(f"^{re.escape(cmd)}$", formatted_value):
             return True
         
         # 2. If not found, append to the end
@@ -96,7 +110,7 @@ class SetenvEditor:
             'raw': "", # New line
             'commented': False,
             'var': cmd,
-            'val': val,
+            'val': formatted_value,
             'indent': ""
         })
         return True
