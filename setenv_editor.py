@@ -22,9 +22,9 @@ class SetenvEditor:
                 self.lines.append({'raw': line, 'commented': False, 'var': None, 'val': None, 'indent': ""})
                 continue
 
-            # tcsh setenv format: [indent] [#] [whitespace] setenv VAR VAL
-            # Match optional leading whitespace, optional comments, optional whitespace, setenv, variable, and value
-            match = re.search(r'^(\s*)(#+)?(\s*)setenv\s+([^\s]+)\s+(.*)$', line.rstrip())
+            # tcsh setenv format: [indent] [#] [whitespace] setenv VAR [VAL]
+            # Match optional leading whitespace, optional comments, optional whitespace, setenv, variable, and optional value
+            match = re.search(r'^(\s*)(#+)?(\s*)setenv\s+([^\s]+)(?:\s+(.*))?$', line.rstrip())
             
             if match:
                 commented = match.group(2) is not None
@@ -60,7 +60,7 @@ class SetenvEditor:
 
     def _quote_value_if_needed(self, val):
         if val is None:
-            return ""
+            return None
         val_str = str(val)
         # If the value contains any whitespace and is not already quoted with single or double quotes
         if any(char.isspace() for char in val_str):
@@ -145,7 +145,11 @@ class SetenvEditor:
                 
             # Apply dominant indentation
             indent = dominant_indent
-            line_str = f"{indent}setenv {entry['var']} {entry['val']}"
+            if entry['val'] is None:
+                line_str = f"{indent}setenv {entry['var']}"
+            else:
+                line_str = f"{indent}setenv {entry['var']} {entry['val']}"
+                
             if entry['commented']:
                 # For setenv_editor, we follow the # setenv style for delete, 
                 # but uncomment removes all #.
@@ -179,19 +183,16 @@ def main():
     if not (args.variable or args.value):
         parser.error("At least one of --variable or --value must be provided.")
 
+    if args.action in ['update', 'set'] and not args.variable:
+        parser.error(f"{args.action} action requires --variable to be specified.")
+
     editor = SetenvEditor(args.file)
 
     if args.action == 'uncomment':
         editor.uncomment(args.variable, args.value)
     elif args.action == 'update':
-        if args.value is None:
-            print("Error: --value is required for update")
-            sys.exit(1)
         editor.update(args.variable, args.value)
     elif args.action == 'set':
-        if args.value is None:
-            print("Error: --value is required for set")
-            sys.exit(1)
         editor.set_variable(args.variable, args.value)
     elif args.action == 'delete':
         editor.delete(args.variable, args.value)
