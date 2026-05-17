@@ -52,6 +52,12 @@ def unescape_tcsh(val):
 
 
 def main():
+    # 콘솔 인코딩으로 인한 UnicodeEncodeError 방지
+    if hasattr(sys.stdout, 'reconfigure'):
+        sys.stdout.reconfigure(encoding='utf-8', errors='replace')
+    if hasattr(sys.stderr, 'reconfigure'):
+        sys.stderr.reconfigure(encoding='utf-8', errors='replace')
+
     # [보강 5] 인자 파싱을 main() 안으로 이동
     if len(sys.argv) != 4:
         print_usage()
