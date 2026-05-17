@@ -1,6 +1,6 @@
-process_technology \
-	-technology_library_file "qrc_tech.lib" \
-	-technology_name "LALA"
+# process_technology
+	# -technology_library_file "qrc_tech.lib"
+	# -technology_name "LALA"
 
  output_setup \
 	-net_name_space layout \
@@ -30,16 +30,15 @@ output_db \
 graybox \
 	-type none
 
-log_file \
-	-type none
-	-file_name qrc.log \
-	-dump_options true
+# log_file
+	# -type out
+	# -file_name qrc.log
+	# -dump_options true
 
-
-log_file2 \
-	-type none
-	-file_name qrc.log \
-	-dump_options true
+# log_file2
+	# -type none
+	# -file_name qrc.log
+	# -dump_options true
 
 filter_coupling_cap \
 	-coupling_cap_threshold_relative 0.05

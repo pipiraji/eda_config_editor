@@ -22,15 +22,15 @@ class SetenvEditor:
                 self.lines.append({'raw': line, 'commented': False, 'var': None, 'val': None, 'indent': ""})
                 continue
 
-            # tcsh setenv format: [#] setenv VAR VAL
-            # Match optional comments, optional whitespace, setenv, variable, and value
-            match = re.search(r'^(#+)?(\s*)setenv\s+([^\s]+)\s+(.*)$', line.rstrip())
+            # tcsh setenv format: [indent] [#] [whitespace] setenv VAR VAL
+            # Match optional leading whitespace, optional comments, optional whitespace, setenv, variable, and value
+            match = re.search(r'^(\s*)(#+)?(\s*)setenv\s+([^\s]+)\s+(.*)$', line.rstrip())
             
             if match:
-                commented = match.group(1) is not None
-                indent = match.group(2)
-                var = match.group(3)
-                val = match.group(4)
+                commented = match.group(2) is not None
+                indent = match.group(1)
+                var = match.group(4)
+                val = match.group(5)
                 self.lines.append({
                     'raw': line,
                     'commented': commented,
@@ -52,7 +52,7 @@ class SetenvEditor:
         if pattern is None or target is None:
             return False
         try:
-            return re.search(pattern, target) is not None
+            return re.fullmatch(pattern, target) is not None
         except re.error:
             return pattern == target
 
@@ -114,6 +114,12 @@ class SetenvEditor:
         return changed
 
     def save(self, output_path=None, dry_run=False):
+        # Determine dominant indentation for setenv lines
+        setenv_indents = [entry['indent'] for entry in self.lines if entry['var'] is not None]
+        dominant_indent = ""
+        if setenv_indents:
+            dominant_indent = max(set(setenv_indents), key=setenv_indents.count)
+
         final_lines = []
         for entry in self.lines:
             if entry['var'] is None:
@@ -121,7 +127,9 @@ class SetenvEditor:
                 final_lines.append(entry['raw'])
                 continue
                 
-            line_str = f"{entry['indent']}setenv {entry['var']} {entry['val']}"
+            # Apply dominant indentation
+            indent = dominant_indent
+            line_str = f"{indent}setenv {entry['var']} {entry['val']}"
             if entry['commented']:
                 # For setenv_editor, we follow the # setenv style for delete, 
                 # but uncomment removes all #.

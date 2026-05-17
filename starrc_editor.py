@@ -55,7 +55,7 @@ class StarrcEditor:
         if pattern is None or target is None:
             return False
         try:
-            return re.search(pattern, target) is not None
+            return re.fullmatch(pattern, target) is not None
         except re.error:
             return pattern == target
 

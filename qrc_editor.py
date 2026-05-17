@@ -81,7 +81,7 @@ class QrcEditor:
         if pattern is None or target is None:
             return False
         try:
-            return re.search(pattern, target) is not None
+            return re.fullmatch(pattern, target) is not None
         except re.error:
             return pattern == target
 
@@ -223,6 +223,20 @@ class QrcEditor:
                 self.lines[cmd_line_idx]['commented'] = True
 
     def save(self, output_path=None, dry_run=False):
+        # Determine dominant indentation for commands and options
+        cmd_indents = [entry['indent'] for entry in self.lines if entry['is_cmd_line']]
+        opt_indents = [entry['indent'] for entry in self.lines if entry['opt'] is not None]
+        
+        dominant_cmd_indent = ""
+        if cmd_indents:
+            dominant_cmd_indent = max(set(cmd_indents), key=cmd_indents.count)
+            
+        dominant_opt_indent = "\t" # Default
+        if opt_indents:
+            non_empty_opt_indents = [i for i in opt_indents if i]
+            if non_empty_opt_indents:
+                dominant_opt_indent = max(set(non_empty_opt_indents), key=non_empty_opt_indents.count)
+
         final_lines = []
         
         # We'll iterate through lines and determine if a backslash is needed
@@ -230,6 +244,12 @@ class QrcEditor:
         # AND the next non-commented line belongs to the same command block.
         
         for i, entry in enumerate(self.lines):
+            # Apply dominant indentation
+            if entry['opt']:
+                entry['indent'] = dominant_opt_indent
+            elif entry['is_cmd_line']:
+                entry['indent'] = dominant_cmd_indent
+
             # 1. Build the base string for the line
             if entry['opt']: # Option line
                 line_str = f"{entry['indent']}{entry['opt']} {entry['val']}"
@@ -323,6 +343,9 @@ def main():
     if not (args.command or args.option or args.value):
         parser.error("At least one of --command, --option, or --value must be provided.")
 
+    if args.option and not args.option.startswith('-'):
+        args.option = '-' + args.option
+
     editor = QrcEditor(args.file)
 
     if args.action == 'uncomment':
@@ -333,8 +356,8 @@ def main():
             sys.exit(1)
         editor.update(args.command, args.option, args.value)
     elif args.action == 'set':
-        if not args.option or args.value is None:
-            print("Error: --option and --value are required for set")
+        if not args.command or not args.option or args.value is None:
+            print("Error: --command, --option and --value are required for set")
             sys.exit(1)
         editor.set_option(args.command, args.option, args.value)
     elif args.action == 'delete':
