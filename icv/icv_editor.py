@@ -51,6 +51,8 @@ class IcvEditor:
                     if ifdef_depth > 0:
                         ifdef_depth -= 1
                     is_directive = True
+                elif re.match(r'^#\s*(else|elif)\b', stripped):
+                    is_directive = True
 
             if is_directive or ifdef_depth > 0:
                 self.lines.append({
@@ -65,11 +67,23 @@ class IcvEditor:
             define_part = line
 
             if is_commented:
+                # For commented lines like: // #define VAR 0.001 // description
+                # We need to find the trailing comment AFTER the #define content
                 first_comment_idx = line.find('//')
-                second_comment_idx = line.find('//', first_comment_idx + 2)
-                if second_comment_idx != -1:
-                    define_part = line[:second_comment_idx]
-                    trailing_comment = line[second_comment_idx:]
+                # Skip past the leading '//' and any whitespace to find #define content
+                content_start = first_comment_idx + 2
+                # Find the #define part first
+                define_match = re.search(r'#define\s+\S+(?:\s+\S+)?', line[content_start:])
+                if define_match:
+                    define_end = content_start + define_match.end()
+                    # Look for trailing // comment after the #define content
+                    trailing_idx = line.find('//', define_end)
+                    if trailing_idx != -1:
+                        define_part = line[:trailing_idx]
+                        trailing_comment = line[trailing_idx:]
+                else:
+                    # No #define found, keep as-is
+                    pass
             else:
                 comment_idx = line.find('//')
                 if comment_idx != -1:

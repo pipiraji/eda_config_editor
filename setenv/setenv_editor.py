@@ -138,12 +138,12 @@ class SetenvEditor:
         return changed
 
     def set_variable(self, cmd, val):
-        formatted_value = self._quote_value_if_needed(val)
         # 1. Try update first (use literal matching for set)
-        if self.update(f"^{re.escape(cmd)}$", formatted_value):
+        if self.update(f"^{re.escape(cmd)}$", val):
             return True
         
         # 2. If not found, append to the end
+        formatted_value = self._quote_value_if_needed(val)
         self.lines.append({
             'raw': "", # New line
             'commented': False,
@@ -191,7 +191,7 @@ class SetenvEditor:
             # Apply dominant indentation
             indent = dominant_indent
             if entry['commented']:
-                # Commented setenv: [indent]# setenv [var][val_sep][val]
+                # Commented setenv: # [indent]setenv [var][val_sep][val]
                 line_str = f"{indent}setenv {entry['var']}"
                 if entry['val'] is not None:
                     val_sep = entry['val_sep'] or " "

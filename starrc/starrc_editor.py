@@ -6,7 +6,7 @@ import os
 class StarrcEditor:
     def __init__(self, file_path):
         self.file_path = file_path
-        self.lines = [] # List of dicts: {'raw': str, 'commented': bool, 'cmd': str, 'val': str, 'sep': str}
+        self.lines = [] # List of dicts: {'raw': str, 'commented': bool, 'cmd': str, 'val': str, 'sep': str, 'indent': str}
         self.load()
 
     def load(self):
@@ -19,7 +19,7 @@ class StarrcEditor:
         for line in raw_lines:
             stripped = line.strip()
             if not stripped:
-                self.lines.append({'raw': line, 'commented': False, 'cmd': None, 'val': None, 'sep': None})
+                self.lines.append({'raw': line, 'commented': False, 'cmd': None, 'val': None, 'sep': None, 'indent': ""})
                 continue
 
             # StarRC Comment: starts with *
@@ -39,7 +39,8 @@ class StarrcEditor:
                     'commented': commented,
                     'cmd': cmd,
                     'val': val,
-                    'sep': sep
+                    'sep': sep,
+                    'indent': line[:len(line) - len(line.lstrip())]
                 })
             else:
                 # Unknown format or just a single word
@@ -48,7 +49,8 @@ class StarrcEditor:
                     'commented': commented,
                     'cmd': content,
                     'val': "",
-                    'sep': " "
+                    'sep': " ",
+                    'indent': line[:len(line) - len(line.lstrip())]
                 })
 
     def _match(self, pattern, target):
@@ -104,7 +106,8 @@ class StarrcEditor:
             'commented': False,
             'cmd': cmd,
             'val': val,
-            'sep': dominant_sep
+            'sep': dominant_sep,
+            'indent': ""
         })
         return True
 
@@ -130,9 +133,9 @@ class StarrcEditor:
                 final_lines.append(entry['raw'])
                 continue
                 
-            line_str = f"{entry['cmd']}{entry['sep']}{entry['val']}"
+            line_str = f"{entry['indent']}{entry['cmd']}{entry['sep']}{entry['val']}"
             if entry['commented']:
-                line_str = f"*{line_str}"
+                line_str = f"*{line_str.lstrip()}"
             
             final_lines.append(line_str + "\n")
 
@@ -172,6 +175,9 @@ def main():
             sys.exit(1)
         editor.update(args.command, args.value)
     elif args.action == 'set':
+        if not args.command:
+            print("Error: --command is required for set")
+            sys.exit(1)
         if args.value is None:
             print("Error: --value is required for set")
             sys.exit(1)

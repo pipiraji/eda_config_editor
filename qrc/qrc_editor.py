@@ -147,7 +147,7 @@ class QrcEditor:
                 matching_cmds.add(entry['cmd'])
         
         if not matching_cmds:
-            print(f"Warning: No command matching '{cmd_pattern}' found to set option '{opt}'")
+            print(f"Warning: No command matching '{cmd}' found to set option '{opt}'")
             return False
 
         for target_cmd in matching_cmds:
@@ -314,22 +314,6 @@ class QrcEditor:
                 f.write(full_content)
             print(f"Successfully saved to {path}")
 
-    def _format_block(self, lines):
-        # Add backslashes to all but the last line
-        formatted = []
-        # Filter out empty or just whitespace lines within block if any
-        lines = [l for l in lines if l.strip()]
-        
-        for i, line in enumerate(lines):
-            clean_line = line.rstrip('\\').strip()
-            if i < len(lines) - 1:
-                # Add backslash
-                formatted.append(f"{line.rstrip()} \\\n")
-            else:
-                # No backslash for last line
-                formatted.append(f"{line.rstrip()}\n")
-        return formatted
-
 def main():
     parser = argparse.ArgumentParser(description="QRC Configuration Editor")
     parser.add_argument("file", help="Path to the QRC .tcl file")
@@ -345,7 +329,10 @@ def main():
     if not (args.command or args.option or args.value):
         parser.error("At least one of --command, --option, or --value must be provided.")
 
-    if args.option and not args.option.startswith('-'):
+    if args.option:
+        if args.option.startswith('-'):
+            print(f"Error: --option 인자에 하이픈('-')을 포함하지 마세요. (입력값: '{args.option}')")
+            sys.exit(1)
         args.option = '-' + args.option
 
     editor = QrcEditor(args.file)
