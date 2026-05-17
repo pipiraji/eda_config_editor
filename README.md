@@ -45,10 +45,16 @@ config_editor/
 │   ├── setenv_editor.py
 │   ├── setenv.csh
 │   └── setenv.md
-└── icv/                      # Synopsys IC Validator 툴 폴더
-    ├── icv_editor.py
-    ├── icv.pxl
-    └── icv.md
+├── icv/                      # Synopsys IC Validator 툴 폴더
+│   ├── icv_editor.py
+│   ├── icv.pxl
+│   └── icv.md
+└── _convert_info_to_env/     # 환경변수 일괄 변환 도구 폴더
+    ├── info_to_env_converter.py
+    ├── info_to_env_converter.md
+    ├── setting.info
+    ├── sourceme.csh
+    └── sourceme.yaml
 ```
 
 | 에디터 스크립트 | 대상 EDA 툴 / 구성 파일 | 핵심 특징 |
@@ -57,6 +63,7 @@ config_editor/
 | **`starrc/starrc_editor.py`** | Synopsys StarRC (`starrc/starrc.cmd`) | 심플한 Key-Value 구조의 주석 제어 및 강력한 AND 조건 필터링 |
 | **`setenv/setenv_editor.py`** | `tcsh` 환경 변수 (`setenv/setenv.csh`) | 2항/3항 완벽 지원, 공백 포함 값 자동 큰따옴표 랩핑 및 주석 Spacing 보존 |
 | **`icv/icv_editor.py`** | Synopsys IC Validator (`icv/icv.pxl`) | 블록 주석 및 `#ifdef` 보호 가드, 우측 설명 주석 Spacing 정밀 보존 |
+| **`_convert_info_to_env/info_to_env_converter.py`** | 설정 변환기 (`_convert_info_to_env/setting.info`) | `.info` 설정을 `sourceme.csh` 및 `sourceme.yaml`로 중복 가드 및 원자적 변환 |
 
 ---
 
@@ -90,6 +97,12 @@ python icv/icv_editor.py icv/icv.pxl uncomment --variable ".*_CHECK"
 
 # 기존 Spacing 정렬 간격을 그대로 지키며 값 업데이트
 python icv/icv_editor.py icv/icv.pxl update --variable GRID_RESOLUTION --value 0.005
+```
+
+### 5. 설정 정보 변환기 (Info-to-Env Converter)
+```bash
+# setting.info에 등록된 신규 정보들을 sourceme.csh(쉘 환경변수) 및 sourceme.yaml에 자동 병합
+python _convert_info_to_env/info_to_env_converter.py _convert_info_to_env/setting.info _convert_info_to_env/sourceme.csh _convert_info_to_env/sourceme.yaml
 ```
 
 ---

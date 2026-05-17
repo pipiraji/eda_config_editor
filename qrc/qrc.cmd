@@ -2,15 +2,15 @@
 	# -technology_library_file "qrc_tech.lib"
 	# -technology_name "LALA"
 
- output_setup \
+output_setup \
 	-net_name_space layout \
 	-directory_name ./name
 
- extraction_setup \
+extraction_setup \
 	-max_fracture_length 50 \
 	-test 1
 
- input_db \
+input_db \
 	-type calibre \
 	-directory_name ./calibre \
 	-run_name Design \
@@ -23,22 +23,23 @@ output_db \
 	-type spef \
 	-subtype standard
 
- extract \
+extract \
 	-selection all \
 	-type rc_decoupled
 
 graybox \
 	-type none
 
-# log_file
-	# -type out
-	# -file_name qrc.log
-	# -dump_options true
+log_file \
+	-type out \
+	-file_name qrc.log \
+	-dump_options true
 
-# log_file2
-	# -type none
-	# -file_name qrc.log
-	# -dump_options true
+log_file2 \
+	-type none \
+	-file_name qrc.log \
+	-dump_options true \
+	-new_opt new_val
 
 filter_coupling_cap \
 	-coupling_cap_threshold_relative 0.05
