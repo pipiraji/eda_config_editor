@@ -31,6 +31,13 @@ graybox \
 	-type none
 
 log_file \
+	-type none
+	-file_name qrc.log \
+	-dump_options true
+
+
+log_file2 \
+	-type none
 	-file_name qrc.log \
 	-dump_options true
 
