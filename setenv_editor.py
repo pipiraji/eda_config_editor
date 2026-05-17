@@ -6,7 +6,7 @@ import os
 class SetenvEditor:
     def __init__(self, file_path):
         self.file_path = file_path
-        self.lines = [] # List of dicts: {'raw': str, 'commented': bool, 'var': str, 'val': str, 'indent': str}
+        self.lines = [] # List of dicts: {'raw': str, 'commented': bool, 'var': str, 'val': str, 'indent': str, 'val_sep': str, 'sep': str, 'trailing_comment': str}
         self.load()
 
     def load(self):
@@ -19,33 +19,71 @@ class SetenvEditor:
         for line in raw_lines:
             stripped = line.strip()
             if not stripped:
-                self.lines.append({'raw': line, 'commented': False, 'var': None, 'val': None, 'indent': ""})
+                self.lines.append({
+                    'raw': line, 'commented': False, 'var': None, 'val': None,
+                    'indent': "", 'val_sep': "", 'sep': "", 'trailing_comment': ""
+                })
                 continue
 
+            # 1. Parse line comments and split into setenv part and trailing comment part
+            is_commented = stripped.startswith('#')
+            trailing_comment = ""
+            setenv_part = line
+
+            if is_commented:
+                # Find a '#' after all consecutive leading '#'s (to handle ###setenv and trailing comments)
+                leading_hashes_match = re.match(r'^\s*(#+)', line)
+                if leading_hashes_match:
+                    hashes_len = len(leading_hashes_match.group(1))
+                    start_search_idx = line.find(leading_hashes_match.group(1)) + hashes_len
+                    second_comment_idx = line.find('#', start_search_idx)
+                    if second_comment_idx != -1:
+                        setenv_part = line[:second_comment_idx]
+                        trailing_comment = line[second_comment_idx:]
+            else:
+                comment_idx = line.find('#')
+                if comment_idx != -1:
+                    setenv_part = line[:comment_idx]
+                    trailing_comment = line[comment_idx:]
+
+            # Calculate exact space separation before the trailing comment
+            stripped_setenv = setenv_part.rstrip()
+            sep = setenv_part[len(stripped_setenv):]
+
+            # 2. Parse setenv in the setenv part
             # tcsh setenv format: [indent] [#] [whitespace] setenv VAR [VAL]
-            # Match optional leading whitespace, optional comments, optional whitespace, setenv, variable, and optional value
-            match = re.search(r'^(\s*)(#+)?(\s*)setenv\s+([^\s]+)(?:\s+(.*))?$', line.rstrip())
+            # Match optional leading whitespace, optional comments, optional whitespace, setenv, variable, optional separator, and optional value
+            match = re.search(r'^(\s*)(#+)?(\s*)setenv\s+([^\s]+)(?:(\s+)(.+))?$', stripped_setenv)
             
             if match:
                 commented = match.group(2) is not None
                 indent = match.group(1)
                 var = match.group(4)
-                val = match.group(5)
+                val_sep = match.group(5) or ""
+                val = match.group(6)
+                if val:
+                    val = val.strip()
                 self.lines.append({
                     'raw': line,
                     'commented': commented,
                     'var': var,
                     'val': val,
-                    'indent': indent
+                    'indent': indent,
+                    'val_sep': val_sep,
+                    'sep': sep,
+                    'trailing_comment': trailing_comment
                 })
             else:
-                # Other lines (comments without setenv, empty lines already handled, etc.)
+                # Other lines (comments without setenv, etc.)
                 self.lines.append({
                     'raw': line,
                     'commented': stripped.startswith('#'),
                     'var': None,
                     'val': None,
-                    'indent': ""
+                    'indent': "",
+                    'val_sep': "",
+                    'sep': "",
+                    'trailing_comment': ""
                 })
 
     def _match(self, pattern, target):
@@ -111,7 +149,10 @@ class SetenvEditor:
             'commented': False,
             'var': cmd,
             'val': formatted_value,
-            'indent': ""
+            'indent': "",
+            'val_sep': " ",
+            'sep': " ",
+            'trailing_comment': ""
         })
         return True
 
@@ -142,20 +183,35 @@ class SetenvEditor:
                 # Preservation line
                 final_lines.append(entry['raw'])
                 continue
+
+            # Ensure previous line ends with newline if we are appending a new line
+            if final_lines and not final_lines[-1].endswith('\n'):
+                final_lines[-1] += '\n'
                 
             # Apply dominant indentation
             indent = dominant_indent
-            if entry['val'] is None:
-                line_str = f"{indent}setenv {entry['var']}"
-            else:
-                line_str = f"{indent}setenv {entry['var']} {entry['val']}"
-                
             if entry['commented']:
-                # For setenv_editor, we follow the # setenv style for delete, 
-                # but uncomment removes all #.
+                # Commented setenv: [indent]# setenv [var][val_sep][val]
+                line_str = f"{indent}setenv {entry['var']}"
+                if entry['val'] is not None:
+                    val_sep = entry['val_sep'] or " "
+                    line_str += f"{val_sep}{entry['val']}"
                 line_str = f"# {line_str.lstrip()}"
+            else:
+                # Active setenv
+                if entry['val'] is None:
+                    line_str = f"{indent}setenv {entry['var']}"
+                else:
+                    val_sep = entry['val_sep'] or " "
+                    line_str = f"{indent}setenv {entry['var']}{val_sep}{entry['val']}"
             
-            final_lines.append(line_str + "\n")
+            # Append trailing comment separator and comment
+            if entry['trailing_comment']:
+                line_str += entry['sep'] + entry['trailing_comment']
+            else:
+                line_str += "\n"
+            
+            final_lines.append(line_str)
 
         full_content = "".join(final_lines)
         
