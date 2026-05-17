@@ -11,9 +11,9 @@
 * **Value (값):** 상수에 할당될 치수 또는 부동소수점 데이터 (예: `0.001`, `0.028`)
 * **주석 기호:** 라인 시작 부분의 `//` (예: `// #define RUN_LVS_CHECK`)
 
-> **CLI 실행 형태:**
-> `python icv_editor.py [파일명] [명령어] --variable [변수명] --value [값]`
-> *(예: `python icv_editor.py icv.pxl set --variable NEW_SWITCH`)*
+> **CLI 실행 형태 (프로젝트 루트 기준):**
+> `python icv/icv_editor.py [파일명] [명령어] --variable [변수명] --value [값]`
+> *(예: `python icv/icv_editor.py icv/icv.pxl set --variable NEW_SWITCH`)*
 > *주: --value를 지정하지 않으면 2항 구조(값 없음)로 생성/수정됩니다.*
 
 ---

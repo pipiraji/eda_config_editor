@@ -12,9 +12,9 @@
 * **Option (옵션):** 커맨드 하위의 세부 설정 키 (예: `-run_name`)
 * **Value (값):** 옵션에 할당되는 실제 데이터 (예: `Design`)
 
-> **CLI 실행 형태:**
-> `python qrc_editor.py [파일명] [명령어] --command [커맨드명] --option [옵션명] --value [값]`
-> *(예: `python qrc_editor.py qrc.tcl set --command input_db --option run_name --value "Design"`)*
+> **CLI 실행 형태 (프로젝트 루트 기준):**
+> `python qrc/qrc_editor.py [파일명] [명령어] --command [커맨드명] --option [옵션명] --value [값]`
+> *(예: `python qrc/qrc_editor.py qrc/qrc.cmd set --command input_db --option run_name --value "Design"`)*
 > *(주의: `--option` 인자는 `-` 없이 입력해야 하며, 내부적으로 자동 적용됩니다.)*
 
 ---

@@ -4,11 +4,11 @@
 
 --- 
 
-## 1. QRC Config Editor (`qrc_editor.py`) 테스트
+## 1. QRC Config Editor (`qrc/qrc_editor.py`) 테스트
 QRC 에디터의 옵션 유효성 검사(하이픈 제한) 및 다중 AND 조건 매칭을 확인합니다.
 
 ### 1.1 옵션 하이픈('-') 방지 가드 테스트
-- **실행 명령어:** `python qrc_editor.py qrc.cmd set --command input_db --option -run_name --value Design`
+- **실행 명령어:** `python qrc/qrc_editor.py qrc/qrc.cmd set --command input_db --option -run_name --value Design`
 - **Exit Code:** `2`
 - **출력 내용 (에러 메시지):**
 ```
@@ -19,7 +19,7 @@ qrc_editor.py: error: argument --option: expected one argument
 ```
 
 ### 1.2 공백 포함 값 추가 및 저장 테스트
-- **실행 명령어:** `python qrc_editor.py qrc.cmd set --command input_db --option run_name --value Design Workspace`
+- **실행 명령어:** `python qrc/qrc_editor.py qrc/qrc.cmd set --command input_db --option run_name --value Design Workspace`
 - **결과 파일 내용:**
 ```tcl
 	-type calibre \
@@ -39,11 +39,11 @@ extract \
 	-type rc_decoupled
 ```
 
-## 2. StarRC Config Editor (`starrc_editor.py`) 테스트
+## 2. StarRC Config Editor (`starrc/starrc_editor.py`) 테스트
 StarRC의 AND 교집합 필터링 기반 주석 제어를 검증합니다.
 
 ### 2.1 AND 조건 매칭 주석 해제 테스트 (Value가 YES인 항목)
-- **실행 명령어:** `python starrc_editor.py starrc.cmd uncomment --value YES`
+- **실행 명령어:** `python starrc/starrc_editor.py starrc/starrc.cmd uncomment --value YES`
 - **결과 파일 내용:**
 ```cmd
 *TCAD_GRD_FILE: /path/to/process.nxtgrd
@@ -58,11 +58,11 @@ TTT: YES
 ETTT: YES
 ```
 
-## 3. tcsh setenv Config Editor (`setenv_editor.py`) 테스트
+## 3. tcsh setenv Config Editor (`setenv/setenv_editor.py`) 테스트
 setenv의 2항 구조 완벽 지원, 공백 포함 시 자동 큰따옴표 랩핑 가드, 그리고 우측 주석 공백 간격 보존을 테스트합니다.
 
 ### 3.1 공백 포함 3항 변수 자동 큰따옴표 랩핑 가드 테스트
-- **실행 명령어:** `python setenv_editor.py setenv.csh set --variable NEW --value VDD* VSS?`
+- **실행 명령어:** `python setenv/setenv_editor.py setenv/setenv.csh set --variable NEW --value VDD* VSS?`
 - **결과 파일 내용:**
 ```csh
 setenv AAAA BBBB
@@ -75,7 +75,7 @@ setenv VAR_ONLY3
 ```
 
 ### 3.2 값 없는 2항 구조 환경 변수 추가 테스트
-- **실행 명령어:** `python setenv_editor.py setenv.csh set --variable VAR_ONLY4`
+- **실행 명령어:** `python setenv/setenv_editor.py setenv/setenv.csh set --variable VAR_ONLY4`
 - **결과 파일 내용:**
 ```csh
 setenv VAR_ONLY2
@@ -84,18 +84,18 @@ setenv VAR_ONLY4
 ```
 
 ### 3.3 우측 설명 주석 및 정렬 공백 간격 보존 테스트
-- **실행 명령어:** `python setenv_editor.py setenv.csh update --variable PATH --value /new/bin:$PATH`
+- **실행 명령어:** `python setenv/setenv_editor.py setenv/setenv.csh update --variable PATH --value /new/bin:$PATH`
 - **결과 파일 내용:**
 ```csh
 
 setenv PATH /new/bin:$PATH        # 패스 지정
 ```
 
-## 4. IC Validator Config Editor (`icv_editor.py`) 테스트
+## 4. IC Validator Config Editor (`icv/icv_editor.py`) 테스트
 IC Validator의 전역 `#define` 지출 필터링, 조건부 컴파일 구역 및 블록 주석 건너뛰기, Spacing 유지 능력을 검증합니다.
 
 ### 4.1 전역(Top-level) 라인 주석 해제 및 블록/조건부 영역 보호 테스트
-- **실행 명령어:** `python icv_editor.py icv.pxl uncomment --variable .*_CHECK`
+- **실행 명령어:** `python icv/icv_editor.py icv/icv.pxl uncomment --variable .*_CHECK`
 - **결과 파일 내용:**
 ```c
 
@@ -116,7 +116,7 @@ IC Validator의 전역 `#define` 지출 필터링, 조건부 컴파일 구역 �
 ```
 
 ### 4.2 값 업데이트 시 Spacing 및 우측 설명 주석 보존 테스트
-- **실행 명령어:** `python icv_editor.py icv.pxl update --variable GRID_RESOLUTION --value 0.005`
+- **실행 명령어:** `python icv/icv_editor.py icv/icv.pxl update --variable GRID_RESOLUTION --value 0.005`
 - **결과 파일 내용:**
 ```c
 
