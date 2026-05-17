@@ -1,6 +1,6 @@
 
 setenv VARIABLE_NAME "value"
-setenv PATH "/usr/local/bin:$PATH"
+setenv PATH "/usr/local/bin:$PATH" # 패스 지정
 
 setenv AA BB
 setenv BBB CCC
