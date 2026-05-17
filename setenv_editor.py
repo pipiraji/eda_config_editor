@@ -49,7 +49,9 @@ class SetenvEditor:
                 })
 
     def _match(self, pattern, target):
-        if pattern is None or target is None:
+        if pattern is None:
+            return True
+        if target is None:
             return False
         try:
             return re.fullmatch(pattern, target) is not None
