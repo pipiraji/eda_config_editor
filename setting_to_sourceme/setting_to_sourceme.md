@@ -2,13 +2,13 @@
 
 ## 1. 시스템 개요
 
-본 스크립트(`info_to_env_converter.py`)는 일반적인 `KEY=VALUE` 형식의 설정 정보 파일(`.info`)을 파싱하여, EDA 환경 설정에 널리 활용되는 **tcsh 쉘 스크립트(`setenv`)** 및 **구조화된 설정 파일(YAML)** 형식으로 정밀하게 마이그레이션 및 자동 병합(Merge)해 주는 환경설정 허브 변환 도구입니다.
+본 스크립트(`setting_to_sourceme.py`)는 일반적인 `KEY=VALUE` 형식의 설정 정보 파일(`.info`)을 파싱하여, EDA 환경 설정에 널리 활용되는 **tcsh 쉘 스크립트(`setenv`)** 및 **구조화된 설정 파일(YAML)** 형식으로 정밀하게 마이그레이션 및 자동 병합(Merge)해 주는 환경설정 허브 변환 도구입니다.
 
 ### 1.1 용어 및 파일 구조 정의
 
-* **설정 정보 파일 (setting.info):** 공백이나 특수 문자가 허용되는 평면형 `KEY=VALUE` 형식 파일.
-* **tcsh 쉘 스크립트 (sourceme.csh):** C-shell 계열 환경 변수 선언 명령어 모음 (`setenv KEY "VALUE"`).
-* **설정 파일 (sourceme.yaml):** 계층 구조나 빌드 툴에서 환경 설정을 통째로 캐싱하기 위해 활용하는 YAML 구조화 파일 (`KEY: VALUE`).
+- **설정 정보 파일 (setting.info):** 공백이나 특수 문자가 허용되는 평면형 `KEY=VALUE` 형식 파일.
+- **tcsh 쉘 스크립트 (sourceme.csh):** C-shell 계열 환경 변수 선언 명령어 모음 (`setenv KEY "VALUE"`).
+- **설정 파일 (sourceme.yaml):** 계층 구조나 빌드 툴에서 환경 설정을 통째로 캐싱하기 위해 활용하는 YAML 구조화 파일 (`KEY: VALUE`).
 
 ---
 
@@ -34,14 +34,16 @@
 ## 3. 사용 방법 및 CLI 실행 가이드
 
 ### 3.1 실행 형식
+
 ```bash
-python info_to_env_converter/info_to_env_converter.py [setting.info 파일] [sourceme.csh 파일] [sourceme.yaml 파일]
+python setting_to_sourceme/setting_to_sourceme.py [setting.info 파일] [sourceme.csh 파일] [sourceme.yaml 파일]
 ```
 
 ### 3.2 실행 예시
+
 ```bash
 # setting.info의 환경 데이터를 sourceme.csh 및 sourceme.yaml에 일괄 적용
-python info_to_env_converter/info_to_env_converter.py info_to_env_converter/setting.info info_to_env_converter/sourceme.csh info_to_env_converter/sourceme.yaml
+python setting_to_sourceme/setting_to_sourceme.py setting_to_sourceme/setting.info setting_to_sourceme/sourceme.csh setting_to_sourceme/sourceme.yaml
 ```
 
 ---

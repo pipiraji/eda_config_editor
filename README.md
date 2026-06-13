@@ -49,9 +49,9 @@ config_editor/
 │   ├── config_editor_for_icv.py
 │   ├── icv.pxl
 │   └── config_editor_for_icv.md
-└── info_to_env_converter/     # 환경변수 일괄 변환 도구 폴더
-    ├── info_to_env_converter.py
-    ├── info_to_env_converter.md
+└── setting_to_sourceme/       # 환경변수 일괄 변환 도구 폴더
+    ├── setting_to_sourceme.py
+    ├── setting_to_sourceme.md
     ├── setting.info
     ├── sourceme.csh
     └── sourceme.yaml
@@ -63,7 +63,7 @@ config_editor/
 | **`config_editor_for_starrc/config_editor_for_starrc.py`** | Synopsys StarRC (`config_editor_for_starrc/starrc.cmd`)  | 심플한 Key-Value 구조의 주석 제어 및 강력한 AND 조건 필터링                 |
 | **`config_editor_for_setenv/config_editor_for_setenv.py`** | `tcsh` 환경 변수 (`config_editor_for_setenv/setenv.csh`) | 2항/3항 완벽 지원, 공백 포함 값 자동 큰따옴표 랩핑 및 주석 Spacing 보존     |
 | **`config_editor_for_icv/config_editor_for_icv.py`**       | Synopsys IC Validator (`config_editor_for_icv/icv.pxl`)  | 블록 주석 및 `#ifdef` 보호 가드, 우측 설명 주석 Spacing 정밀 보존           |
-| **`info_to_env_converter/info_to_env_converter.py`**       | 설정 변환기 (`info_to_env_converter/setting.info`)       | `.info` 설정을 `sourceme.csh` 및 `sourceme.yaml`로 중복 가드 및 원자적 변환 |
+| **`setting_to_sourceme/setting_to_sourceme.py`**           | 설정 변환기 (`setting_to_sourceme/setting.info`)         | `.info` 설정을 `sourceme.csh` 및 `sourceme.yaml`로 중복 가드 및 원자적 변환 |
 
 ---
 
@@ -103,11 +103,11 @@ python config_editor_for_icv/config_editor_for_icv.py config_editor_for_icv/icv.
 python config_editor_for_icv/config_editor_for_icv.py config_editor_for_icv/icv.pxl update --variable GRID_RESOLUTION --value 0.005
 ```
 
-### 5. 설정 정보 변환기 (Info-to-Env Converter)
+### 5. 설정 정보 변환기 (Setting-to-Sourceme Converter)
 
 ```bash
 # setting.info에 등록된 신규 정보들을 sourceme.csh(쉘 환경변수) 및 sourceme.yaml에 자동 병합
-python info_to_env_converter/info_to_env_converter.py info_to_env_converter/setting.info info_to_env_converter/sourceme.csh info_to_env_converter/sourceme.yaml
+python setting_to_sourceme/setting_to_sourceme.py setting_to_sourceme/setting.info setting_to_sourceme/sourceme.csh setting_to_sourceme/sourceme.yaml
 ```
 
 ---

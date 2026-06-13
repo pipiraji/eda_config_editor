@@ -9,7 +9,7 @@ from datetime import datetime
 
 def print_usage():
     print(
-        "사용법: python3 info_to_env_converter.py <입력1: setting.info> <입력2: sourceme> <입력3: sourceme.yaml>"
+        "사용법: python3 setting_to_sourceme.py <입력1: setting.info> <입력2: sourceme> <입력3: sourceme.yaml>"
     )
     sys.exit(1)
 
@@ -52,10 +52,10 @@ def unescape_tcsh(val):
 
 def main():
     # 콘솔 인코딩으로 인한 UnicodeEncodeError 방지
-    if hasattr(sys.stdout, 'reconfigure'):
-        sys.stdout.reconfigure(encoding='utf-8', errors='replace')
-    if hasattr(sys.stderr, 'reconfigure'):
-        sys.stderr.reconfigure(encoding='utf-8', errors='replace')
+    if hasattr(sys.stdout, "reconfigure"):
+        sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+    if hasattr(sys.stderr, "reconfigure"):
+        sys.stderr.reconfigure(encoding="utf-8", errors="replace")
 
     # [보강 5] 인자 파싱을 main() 안으로 이동
     if len(sys.argv) != 4:
